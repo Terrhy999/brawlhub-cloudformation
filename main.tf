@@ -80,6 +80,26 @@ resource "aws_route_table_association" "private_b" {
   subnet_id = aws_subnet.private_subnet_b.id
 }
 
+# Allocate an elastic IP for our NAT Gateway
+resource "aws_eip" "nat_eip" {
+  instance = aws_instance.web.id
+  domain   = "vpc"
+
+  tags = {
+    Name = "NatEIP"
+  }
+}
+
+# Create a NAT Gateway for internet access in our private subnet
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id = aws_subnet.public_subnet_a.id
+
+  tags = {
+    Name = "NatGateway"
+  }
+}
+
 # We will need 3 subnets, 2 private subnets, and 2 public ones.
 # This is because the database and application load balancer is required to be across multiple availablity zones.
 # So 2 private subnets in 2 availability zones for our db, 2 public subnets in 2 AZs for our ALB.
