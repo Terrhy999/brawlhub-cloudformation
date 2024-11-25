@@ -22,3 +22,12 @@ resource "aws_vpc" "main" {
     Name = "brawlhub-terraform"
   }
 }
+
+# Create an Internet Gateway for instances in private subnets to be able to reach the internet
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "BrawlhubIGW"
+  }
+}
