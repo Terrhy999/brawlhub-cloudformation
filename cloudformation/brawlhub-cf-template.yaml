@@ -85,3 +85,21 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-private-route-table
+
+  BrawlhubNATGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: "vpc"
+      - Key: Name
+        Value: brawlhub-nat-gateway-eip
+  
+  BrawlhubNATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt BrawlhubNATGatewayEIP.AllocationId
+      SubnetId: !Ref BrawlhubPulicSubnet1
+      Tags:
+        - Key: Name
+          Value: brawlhub-nat-gateway
+
+  
