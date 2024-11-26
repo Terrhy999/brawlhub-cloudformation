@@ -82,9 +82,6 @@ resource "aws_route_table_association" "private_b" {
 
 # Allocate an elastic IP for our NAT Gateway
 resource "aws_eip" "nat_eip" {
-  instance = aws_instance.web.id
-  domain   = "vpc"
-
   tags = {
     Name = "NatEIP"
   }
@@ -147,5 +144,55 @@ resource "aws_subnet" "private_subnet_b" {
 
   tags = {
     Name = "PrivateSubnetB"
+  }
+}
+
+# EC2 Security Groups
+
+# EC2 Security Group Bastion Host
+resource "aws_security_group" "bastion_sg" {
+  name = "bastion_sg"
+  description = "bastion host for brawlhub, allows access from my home IP"
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "bastion_sg"
+  }
+}
+
+# Rules for the "bastion_sg"
+
+# Allow all internal traffic into bastion host
+resource "aws_vpc_security_group_ingress_rule" "internal_traffic" {
+  security_group_id = aws_security_group.bastion_sg.id
+  cidr_ipv4 = "10.0.0.0/24"
+  ip_protocol = "-1"
+}
+
+# Allow ssh traffic from my public IP into bastion host
+resource "aws_vpc_security_group_ingress_rule" "bastion_ssh" {
+  security_group_id = aws_security_group.bastion_sg.id
+  cidr_ipv4 = "100.1.8.121/32"
+  from_port = 22
+  to_port = 22
+  ip_protocol = "tcp"
+}
+
+# Allow all outbound traffic from bastion
+resource "aws_vpc_security_group_egress_rule" "all_outbound_bastion" {
+  security_group_id = aws_security_group.bastion_sg.id
+  cidr_ipv4 = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+
+resource "aws_instance" "bastion_host" {
+  ami = "ami-0866a3c8686eaeeba"
+  instance_type = "t2.micro"
+  subnet_id = aws_subnet.public_subnet_a.id
+  associate_public_ip_address = true
+  key_name = "Thinkpad"
+
+  tags = {
+    Name = "BastionHost"
   }
 }
