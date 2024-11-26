@@ -126,4 +126,18 @@ Resources:
         - Key: Name
           Value: brawlhub-nat-gateway
 
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref BrawlhubPublicRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref BrawlhubInternetGateway
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref BrawlhubPrivateRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref BrawlhubNATGateway
+
   
