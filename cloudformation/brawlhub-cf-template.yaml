@@ -12,6 +12,7 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-vpc
+
   BrawlhubPulicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -22,6 +23,7 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-public-subnet-1
+
   BrawlhubPulicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -32,6 +34,7 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-public-subnet-2
+
   BrawlhubPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -42,6 +45,7 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-private-subnet-1
+
   BrawlhubPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -52,14 +56,32 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-private-subnet-2
+
   BrawlhubInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
           Value: brawlhub-internet-gateway
+
   BrawlhubVPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref BrawlhubInternetGateway
       VpcId: !Ref BrawlhubVPC
+
+  BrawlhubPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref BrawlhubVPC
+      Tags:
+        - Key: Name
+          Value: brawlhub-public-route-table
+
+  BrawlhubPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref BrawlhubVPC
+      Tags:
+        - Key: Name
+          Value: brawlhub-private-route-table
