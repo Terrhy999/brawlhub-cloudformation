@@ -13,7 +13,7 @@ Resources:
         - Key: Name
           Value: brawlhub-vpc
 
-  BrawlhubPulicSubnet1:
+  BrawlhubPublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -24,7 +24,7 @@ Resources:
         - Key: Name
           Value: brawlhub-public-subnet-1
 
-  BrawlhubPulicSubnet2:
+  BrawlhubPublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -89,13 +89,13 @@ Resources:
   PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPulicSubnet1
+      SubnetId: !Ref BrawlhubPublicSubnet1
       RouteTableId: !Ref BrawlhubPublicRouteTable
 
   PublicSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPulicSubnet2
+      SubnetId: !Ref BrawlhubPublicSubnet2
       RouteTableId: !Ref BrawlhubPublicRouteTable
 
   PrivateSubnet1RouteTableAssociation:
@@ -114,14 +114,15 @@ Resources:
     Type: AWS::EC2::EIP
     Properties:
       Domain: "vpc"
-      - Key: Name
-        Value: brawlhub-nat-gateway-eip
-  
+      Tags:
+        - Key: Name
+          Value: brawlhub-nat-gateway-eip
+
   BrawlhubNATGateway:
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId: !GetAtt BrawlhubNATGatewayEIP.AllocationId
-      SubnetId: !Ref BrawlhubPulicSubnet1
+      SubnetId: !Ref BrawlhubPublicSubnet1
       Tags:
         - Key: Name
           Value: brawlhub-nat-gateway
@@ -139,5 +140,3 @@ Resources:
       RouteTableId: !Ref BrawlhubPrivateRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
       NatGatewayId: !Ref BrawlhubNATGateway
-
-  
