@@ -52,3 +52,14 @@ Resources:
       Tags:
         - Key: Name
           Value: brawlhub-private-subnet-2
+  BrawlhubInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: brawlhub-internet-gateway
+  BrawlhubVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref BrawlhubInternetGateway
+      VpcId: !Ref BrawlhubVPC
