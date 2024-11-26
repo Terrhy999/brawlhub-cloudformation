@@ -86,6 +86,30 @@ Resources:
         - Key: Name
           Value: brawlhub-private-route-table
 
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BrawlhubPulicSubnet1
+      RouteTableId: !Ref BrawlhubPublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BrawlhubPulicSubnet2
+      RouteTableId: !Ref BrawlhubPublicRouteTable
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BrawlhubPrivateSubnet1
+      RouteTableId: !Ref BrawlhubPrivateRouteTable
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref BrawlhubPrivateSubnet2
+      RouteTableId: !Ref BrawlhubPrivateRouteTable
+
   BrawlhubNATGatewayEIP:
     Type: AWS::EC2::EIP
     Properties:
