@@ -234,3 +234,54 @@ Resources:
       Tags:
         - Key: Name
           Value: "frontend-tg"
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Subnet group for Brawlhub RDS instance"
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      Tags:
+        - Key: Name
+          Value: "brawlhub-db-subnet-group"
+
+  BrawlhubDBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Allow access to the Brawlhub RDS instance"
+      VpcId: !Ref BrawlhubVPC
+      SecurityGroupIngress:
+        - IpProtocol: "tcp"
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref APISG
+      Tags:
+        - Key: Name
+          Value: "brawlhub-db-sg"
+
+  BrawlhubDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      DBInstanceClass: "db.t4g.micro"
+      DBInstanceIdentifier: "brawlhub-db"
+      DBName: "brawlhub"
+      Engine: "postgres"
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: "{{resolve:ssm-secure:/brawlhub/db-password:1}}"
+      PubliclyAccessible: "false"
+      StorageType: "gp2"
+      VPCSecurityGroups:
+        - !Ref BrawlhubDBSecurityGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      MultiAZ: "false"
+      BackupRetentionPeriod: 7
+      Tags:
+        - Key: Name
+          Value: "brawlhub-db"
+
+Parameters:
+  DBUsername:
+    Type: String
+    Description: "The database admin account username"
