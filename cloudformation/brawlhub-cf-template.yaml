@@ -19,7 +19,7 @@ Resources:
       VpcId: !Ref BrawlhubVPC
       CidrBlock: "10.0.1.0/24"
       MapPublicIpOnLaunch: "true"
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [0, !GetAZs "us-east-1"]
       Tags:
         - Key: Name
           Value: public-subnet-1
@@ -30,7 +30,7 @@ Resources:
       VpcId: !Ref BrawlhubVPC
       CidrBlock: "10.0.2.0/24"
       MapPublicIpOnLaunch: "true"
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: !Select [1, !GetAZs "us-east-1"]
       Tags:
         - Key: Name
           Value: public-subnet-2
@@ -41,7 +41,7 @@ Resources:
       VpcId: !Ref BrawlhubVPC
       CidrBlock: "10.0.3.0/24"
       MapPublicIpOnLaunch: "false"
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [0, !GetAZs "us-east-1"]
       Tags:
         - Key: Name
           Value: private-subnet-1
@@ -52,7 +52,7 @@ Resources:
       VpcId: !Ref BrawlhubVPC
       CidrBlock: "10.0.4.0/24"
       MapPublicIpOnLaunch: "false"
-      AvailabilityZone: "us-east-1b"
+      AvailabilityZone: !Select [1, !GetAZs "us-east-1"]
       Tags:
         - Key: Name
           Value: private-subnet-2
@@ -123,9 +123,6 @@ Resources:
     Properties:
       AllocationId: !GetAtt NATGatewayEIP.AllocationId
       SubnetId: !Ref PublicSubnet1
-      Tags:
-        - Key: Name
-          Value: nat-gateway
 
   PublicRoute:
     Type: AWS::EC2::Route
@@ -163,14 +160,11 @@ Resources:
       Path: "/brawlhub/"
       Roles:
         - !Ref BrawlhubSSMRole
-      Tags:
-        - Key: Name
-          Value: brawlhub-ssm-instance-profile
 
   FrontendInstance:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [0, !GetAZs "us-east-1"]
       IamInstanceProfile: !Ref BrawlhubSSMInstanceProfile
       ImageId: "ami-0166fe664262f664c"
       InstanceType: "t2.micro"
@@ -183,7 +177,7 @@ Resources:
   APIInstance:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: "us-east-1a"
+      AvailabilityZone: !Select [1, !GetAZs "us-east-1"]
       IamInstanceProfile: !Ref BrawlhubSSMInstanceProfile
       ImageId: "ami-0166fe664262f664c"
       InstanceType: "t2.micro"
