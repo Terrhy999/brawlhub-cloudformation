@@ -13,7 +13,7 @@ Resources:
         - Key: Name
           Value: brawlhub-vpc
 
-  BrawlhubPublicSubnet1:
+  PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -22,9 +22,9 @@ Resources:
       AvailabilityZone: "us-east-1a"
       Tags:
         - Key: Name
-          Value: brawlhub-public-subnet-1
+          Value: public-subnet-1
 
-  BrawlhubPublicSubnet2:
+  PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -33,9 +33,9 @@ Resources:
       AvailabilityZone: "us-east-1b"
       Tags:
         - Key: Name
-          Value: brawlhub-public-subnet-2
+          Value: public-subnet-2
 
-  BrawlhubPrivateSubnet1:
+  PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -44,9 +44,9 @@ Resources:
       AvailabilityZone: "us-east-1a"
       Tags:
         - Key: Name
-          Value: brawlhub-private-subnet-1
+          Value: private-subnet-1
 
-  BrawlhubPrivateSubnet2:
+  PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref BrawlhubVPC
@@ -55,91 +55,91 @@ Resources:
       AvailabilityZone: "us-east-1b"
       Tags:
         - Key: Name
-          Value: brawlhub-private-subnet-2
+          Value: private-subnet-2
 
-  BrawlhubInternetGateway:
+  InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: brawlhub-internet-gateway
+          Value: internet-gateway
 
-  BrawlhubVPCGatewayAttachment:
+  VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      InternetGatewayId: !Ref BrawlhubInternetGateway
+      InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref BrawlhubVPC
 
-  BrawlhubPublicRouteTable:
+  PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref BrawlhubVPC
       Tags:
         - Key: Name
-          Value: brawlhub-public-route-table
+          Value: public-route-table
 
-  BrawlhubPrivateRouteTable:
+  PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref BrawlhubVPC
       Tags:
         - Key: Name
-          Value: brawlhub-private-route-table
+          Value: private-route-table
 
   PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPublicSubnet1
-      RouteTableId: !Ref BrawlhubPublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
 
   PublicSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPublicSubnet2
-      RouteTableId: !Ref BrawlhubPublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
 
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPrivateSubnet1
-      RouteTableId: !Ref BrawlhubPrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
 
   PrivateSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref BrawlhubPrivateSubnet2
-      RouteTableId: !Ref BrawlhubPrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
 
-  BrawlhubNATGatewayEIP:
+  NATGatewayEIP:
     Type: AWS::EC2::EIP
     Properties:
       Domain: "vpc"
       Tags:
         - Key: Name
-          Value: brawlhub-nat-gateway-eip
+          Value: nat-gateway-eip
 
-  BrawlhubNATGateway:
+  NATGateway:
     Type: AWS::EC2::NatGateway
     Properties:
-      AllocationId: !GetAtt BrawlhubNATGatewayEIP.AllocationId
-      SubnetId: !Ref BrawlhubPublicSubnet1
+      AllocationId: !GetAtt NATGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
       Tags:
         - Key: Name
-          Value: brawlhub-nat-gateway
+          Value: nat-gateway
 
   PublicRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref BrawlhubPublicRouteTable
+      RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
-      GatewayId: !Ref BrawlhubInternetGateway
+      GatewayId: !Ref InternetGateway
 
   PrivateRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref BrawlhubPrivateRouteTable
+      RouteTableId: !Ref PrivateRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
-      NatGatewayId: !Ref BrawlhubNATGateway
+      NatGatewayId: !Ref NATGateway
 
   BrawlhubSSMRole:
     Type: AWS::IAM::Role
@@ -167,7 +167,7 @@ Resources:
         - Key: Name
           Value: brawlhub-ssm-instance-profile
 
-  BrawlhubFrontendInstance:
+  FrontendInstance:
     Type: AWS::EC2::Instance
     Properties:
       AvailabilityZone: "us-east-1a"
@@ -175,12 +175,12 @@ Resources:
       ImageId: "ami-0166fe664262f664c"
       InstanceType: "t2.micro"
       KeyName: "Thinkpad"
-      SubnetId: !Ref BrawlhubPrivateSubnet1
+      SubnetId: !Ref PrivateSubnet1
       Tags:
         - Key: Name
-          Value: brawlhub-frontend-instance
+          Value: frontend-instance
 
-  BrawlhubAPIInstance:
+  APIInstance:
     Type: AWS::EC2::Instance
     Properties:
       AvailabilityZone: "us-east-1a"
@@ -188,7 +188,7 @@ Resources:
       ImageId: "ami-0166fe664262f664c"
       InstanceType: "t2.micro"
       KeyName: "Thinkpad"
-      SubnetId: !Ref BrawlhubPrivateSubnet1
+      SubnetId: !Ref PrivateSubnet1
       Tags:
         - Key: Name
-          Value: brawlhub-api-instance
+          Value: api-instance
