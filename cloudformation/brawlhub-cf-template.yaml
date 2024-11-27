@@ -140,3 +140,55 @@ Resources:
       RouteTableId: !Ref BrawlhubPrivateRouteTable
       DestinationCidrBlock: "0.0.0.0/0"
       NatGatewayId: !Ref BrawlhubNATGateway
+
+  BrawlhubSSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ec2.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonEC2RoleforSSM"
+      Tags:
+        - Key: Name
+          Value: brawlhub-ssm-role
+
+  BrawlhubSSMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/brawlhub/"
+      Roles:
+        - !Ref BrawlhubSSMRole
+      Tags:
+        - Key: Name
+          Value: brawlhub-ssm-instance-profile
+
+  BrawlhubFrontendInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: "us-east-1a"
+      IamInstanceProfile: !Ref BrawlhubSSMInstanceProfile
+      ImageId: "ami-0166fe664262f664c"
+      InstanceType: "t2.micro"
+      KeyName: "Thinkpad"
+      SubnetId: !Ref BrawlhubPrivateSubnet1
+      Tags:
+        - Key: Name
+          Value: brawlhub-frontend-instance
+
+  BrawlhubAPIInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: "us-east-1a"
+      IamInstanceProfile: !Ref BrawlhubSSMInstanceProfile
+      ImageId: "ami-0166fe664262f664c"
+      InstanceType: "t2.micro"
+      KeyName: "Thinkpad"
+      SubnetId: !Ref BrawlhubPrivateSubnet1
+      Tags:
+        - Key: Name
+          Value: brawlhub-api-instance
